@@ -1,34 +1,82 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from './ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Badge } from './ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Textarea } from './ui/textarea';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
-import { Pencil, Trash2, Search, UserPlus, Shield, User as UserIcon, Loader2, RefreshCw } from 'lucide-react';
-import { toast } from 'sonner';
-import { User, UserCreate, UserUpdate, getUsers, createUser, updateUser, deleteUser } from '../services/usersApi';
+import React, { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogDescription,
+} from "./ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
+import { Badge } from "./ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Textarea } from "./ui/textarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
+import {
+  Pencil,
+  Trash2,
+  Search,
+  UserPlus,
+  Shield,
+  User as UserIcon,
+  Loader2,
+  RefreshCw,
+} from "lucide-react";
+import { toast } from "sonner";
+import type {
+  User,
+  UserCreate,
+  UserUpdate,
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+} from "../services/usersApi";
 
 export function UserManagement() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [formData, setFormData] = useState<UserCreate & { password?: string }>({
-    name: '',
-    email: '',
-    password: '',
-    role: 'moderator',
-    description: '',
-    address: ''
+    name: "",
+    email: "",
+    password: "",
+    role: "moderator",
+    description: "",
+    address: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -39,8 +87,8 @@ export function UserManagement() {
       const fetchedUsers = await getUsers();
       setUsers(fetchedUsers);
     } catch (error) {
-      console.error('Failed to load users:', error);
-      toast.error('Gagal memuat data pengguna');
+      console.error("Failed to load users:", error);
+      toast.error("Gagal memuat data pengguna");
     } finally {
       setLoading(false);
     }
@@ -52,10 +100,10 @@ export function UserManagement() {
       setRefreshing(true);
       const fetchedUsers = await getUsers();
       setUsers(fetchedUsers);
-      toast.success('Data pengguna berhasil diperbarui');
+      toast.success("Data pengguna berhasil diperbarui");
     } catch (error) {
-      console.error('Failed to refresh users:', error);
-      toast.error('Gagal memperbarui data pengguna');
+      console.error("Failed to refresh users:", error);
+      toast.error("Gagal memperbarui data pengguna");
     } finally {
       setRefreshing(false);
     }
@@ -67,28 +115,29 @@ export function UserManagement() {
   }, []);
 
   // Filter users berdasarkan search dan filter
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+    const matchesRole = roleFilter === "all" || user.role === roleFilter;
 
     return matchesSearch && matchesRole;
   });
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      email: '',
-      password: '',
-      role: 'moderator',
-      description: '',
-      address: ''
+      name: "",
+      email: "",
+      password: "",
+      role: "moderator",
+      description: "",
+      address: "",
     });
   };
 
   const handleAddUser = async () => {
     if (!formData.name || !formData.email || !formData.password) {
-      toast.error('Nama, email, dan password harus diisi');
+      toast.error("Nama, email, dan password harus diisi");
       return;
     }
 
@@ -100,15 +149,15 @@ export function UserManagement() {
         password: formData.password,
         role: formData.role,
         description: formData.description,
-        address: formData.address
+        address: formData.address,
       });
 
       setUsers([...users, newUser]);
       resetForm();
       setShowAddDialog(false);
-      toast.success('User berhasil ditambahkan');
+      toast.success("User berhasil ditambahkan");
     } catch (error: any) {
-      toast.error(error.message || 'Gagal menambahkan user');
+      toast.error(error.message || "Gagal menambahkan user");
     } finally {
       setIsSubmitting(false);
     }
@@ -116,7 +165,7 @@ export function UserManagement() {
 
   const handleEditUser = async () => {
     if (!editingUser || !formData.name || !formData.email) {
-      toast.error('Nama dan email harus diisi');
+      toast.error("Nama dan email harus diisi");
       return;
     }
 
@@ -127,9 +176,9 @@ export function UserManagement() {
         email: formData.email,
         role: formData.role,
         description: formData.description,
-        address: formData.address
+        address: formData.address,
       };
-      
+
       // Include password only if it's provided
       if (formData.password && formData.password.trim()) {
         updateData.password = formData.password;
@@ -137,16 +186,18 @@ export function UserManagement() {
 
       const updatedUser = await updateUser(editingUser.user_id, updateData);
 
-      setUsers(users.map(user => 
-        user.user_id === editingUser.user_id ? updatedUser : user
-      ));
-      
+      setUsers(
+        users.map((user) =>
+          user.user_id === editingUser.user_id ? updatedUser : user
+        )
+      );
+
       resetForm();
       setShowEditDialog(false);
       setEditingUser(null);
-      toast.success('User berhasil diperbarui');
+      toast.success("User berhasil diperbarui");
     } catch (error: any) {
-      toast.error(error.message || 'Gagal memperbarui user');
+      toast.error(error.message || "Gagal memperbarui user");
     } finally {
       setIsSubmitting(false);
     }
@@ -155,10 +206,10 @@ export function UserManagement() {
   const handleDeleteUser = async (userId: number) => {
     try {
       await deleteUser(userId);
-      setUsers(users.filter(user => user.user_id !== userId));
-      toast.success('User berhasil dihapus');
+      setUsers(users.filter((user) => user.user_id !== userId));
+      toast.success("User berhasil dihapus");
     } catch (error: any) {
-      toast.error(error.message || 'Gagal menghapus user');
+      toast.error(error.message || "Gagal menghapus user");
     }
   };
 
@@ -167,26 +218,30 @@ export function UserManagement() {
     setFormData({
       name: user.name,
       email: user.email,
-      password: '', // Don't pre-fill password for security
+      password: "", // Don't pre-fill password for security
       role: user.role,
-      description: user.description || '',
-      address: user.address || ''
+      description: user.description || "",
+      address: user.address || "",
     });
     setShowEditDialog(true);
   };
 
   const getRoleIcon = (role: string) => {
-    return role === 'admin' ? <Shield className="w-4 h-4" /> : <UserIcon className="w-4 h-4" />;
+    return role === "admin" ? (
+      <Shield className="w-4 h-4" />
+    ) : (
+      <UserIcon className="w-4 h-4" />
+    );
   };
 
   const getRoleBadgeVariant = (role: string) => {
-    return role === 'admin' ? 'default' : 'secondary';
+    return role === "admin" ? "default" : "secondary";
   };
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return 'Belum pernah';
+    if (!dateString) return "Belum pernah";
     const date = new Date(dateString);
-    return date.toLocaleString('id-ID');
+    return date.toLocaleString("id-ID");
   };
 
   if (loading) {
@@ -213,11 +268,19 @@ export function UserManagement() {
         </div>
 
         <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={refreshUsers} disabled={refreshing}>
-            {refreshing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+          <Button
+            variant="outline"
+            onClick={refreshUsers}
+            disabled={refreshing}
+          >
+            {refreshing ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4 mr-2" />
+            )}
             Refresh
           </Button>
-          
+
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
             <DialogTrigger asChild>
               <Button onClick={resetForm}>
@@ -239,7 +302,9 @@ export function UserManagement() {
                   <Input
                     id="add-name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     placeholder="Masukkan nama lengkap"
                   />
                 </div>
@@ -250,7 +315,9 @@ export function UserManagement() {
                     id="add-email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     placeholder="email@example.com"
                   />
                 </div>
@@ -261,14 +328,21 @@ export function UserManagement() {
                     id="add-password"
                     type="password"
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     placeholder="Masukkan password"
                   />
                 </div>
 
                 <div>
                   <Label>Role</Label>
-                  <Select value={formData.role} onValueChange={(v: 'admin' | 'moderator') => setFormData({ ...formData, role: v })}>
+                  <Select
+                    value={formData.role}
+                    onValueChange={(v: "admin" | "moderator") =>
+                      setFormData({ ...formData, role: v })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -284,7 +358,9 @@ export function UserManagement() {
                   <Textarea
                     id="add-description"
                     value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
                     placeholder="Deskripsi tugas atau tanggung jawab"
                     rows={3}
                   />
@@ -295,7 +371,9 @@ export function UserManagement() {
                   <Textarea
                     id="add-address"
                     value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, address: e.target.value })
+                    }
                     placeholder="Alamat lengkap"
                     rows={2}
                   />
@@ -303,11 +381,17 @@ export function UserManagement() {
               </div>
 
               <DialogFooter>
-                <Button variant="outline" onClick={() => setShowAddDialog(false)} disabled={isSubmitting}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAddDialog(false)}
+                  disabled={isSubmitting}
+                >
                   Batal
                 </Button>
                 <Button onClick={handleAddUser} disabled={isSubmitting}>
-                  {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                  {isSubmitting ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : null}
                   Tambah User
                 </Button>
               </DialogFooter>
@@ -351,11 +435,11 @@ export function UserManagement() {
             </div>
 
             <div className="flex items-end">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => {
-                  setSearchTerm('');
-                  setRoleFilter('all');
+                  setSearchTerm("");
+                  setRoleFilter("all");
                 }}
                 className="w-full"
               >
@@ -393,7 +477,9 @@ export function UserManagement() {
                 {filteredUsers.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-8">
-                      {searchTerm || roleFilter !== 'all' ? 'Tidak ada user yang sesuai dengan filter' : 'Belum ada data user'}
+                      {searchTerm || roleFilter !== "all"
+                        ? "Tidak ada user yang sesuai dengan filter"
+                        : "Belum ada data user"}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -402,19 +488,30 @@ export function UserManagement() {
                       <TableCell className="font-medium">{user.name}</TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>
-                        <Badge variant={getRoleBadgeVariant(user.role)} className="flex items-center w-fit">
+                        <Badge
+                          variant={getRoleBadgeVariant(user.role)}
+                          className="flex items-center w-fit"
+                        >
                           {getRoleIcon(user.role)}
-                          <span className="ml-1">{user.role === 'admin' ? 'Admin' : 'Moderator'}</span>
+                          <span className="ml-1">
+                            {user.role === "admin" ? "Admin" : "Moderator"}
+                          </span>
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="max-w-48 truncate" title={user.description || ''}>
-                          {user.description || '-'}
+                        <div
+                          className="max-w-48 truncate"
+                          title={user.description || ""}
+                        >
+                          {user.description || "-"}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="max-w-48 truncate" title={user.address || ''}>
-                          {user.address || '-'}
+                        <div
+                          className="max-w-48 truncate"
+                          title={user.address || ""}
+                        >
+                          {user.address || "-"}
                         </div>
                       </TableCell>
                       <TableCell>{formatDate(user.created_at)}</TableCell>
@@ -427,7 +524,7 @@ export function UserManagement() {
                           >
                             <Pencil className="w-4 h-4" />
                           </Button>
-                          
+
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
@@ -440,10 +537,13 @@ export function UserManagement() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Konfirmasi Hapus User</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  Konfirmasi Hapus User
+                                </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Apakah Anda yakin ingin menghapus user <strong>{user.name}</strong>? 
-                                  Tindakan ini tidak dapat dibatalkan.
+                                  Apakah Anda yakin ingin menghapus user{" "}
+                                  <strong>{user.name}</strong>? Tindakan ini
+                                  tidak dapat dibatalkan.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
@@ -484,7 +584,9 @@ export function UserManagement() {
               <Input
                 id="edit-name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Masukkan nama lengkap"
               />
             </div>
@@ -495,25 +597,36 @@ export function UserManagement() {
                 id="edit-email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 placeholder="email@example.com"
               />
             </div>
 
             <div>
-              <Label htmlFor="edit-password">Password (kosongkan jika tidak ingin mengubah)</Label>
+              <Label htmlFor="edit-password">
+                Password (kosongkan jika tidak ingin mengubah)
+              </Label>
               <Input
                 id="edit-password"
                 type="password"
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
                 placeholder="Password baru (opsional)"
               />
             </div>
 
             <div>
               <Label>Role</Label>
-              <Select value={formData.role} onValueChange={(v: 'admin' | 'moderator') => setFormData({ ...formData, role: v })}>
+              <Select
+                value={formData.role}
+                onValueChange={(v: "admin" | "moderator") =>
+                  setFormData({ ...formData, role: v })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -529,7 +642,9 @@ export function UserManagement() {
               <Textarea
                 id="edit-description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Deskripsi tugas atau tanggung jawab"
                 rows={3}
               />
@@ -540,7 +655,9 @@ export function UserManagement() {
               <Textarea
                 id="edit-address"
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, address: e.target.value })
+                }
                 placeholder="Alamat lengkap"
                 rows={2}
               />
@@ -548,11 +665,17 @@ export function UserManagement() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowEditDialog(false)} disabled={isSubmitting}>
+            <Button
+              variant="outline"
+              onClick={() => setShowEditDialog(false)}
+              disabled={isSubmitting}
+            >
               Batal
             </Button>
             <Button onClick={handleEditUser} disabled={isSubmitting}>
-              {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : null}
               Simpan Perubahan
             </Button>
           </DialogFooter>
